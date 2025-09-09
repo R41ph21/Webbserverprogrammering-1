@@ -1,29 +1,46 @@
 import express from "express"
-import cors from "cors"
-import fs from "fs"
-import { fileURLToPath } from "url"
+import cors from "cors" // Tillåter fröfrågningar från andra domäner (Cross-Origin Reccourse Sharing)
+import fs from "fs" // Node.js filsystem-modul för att läsa och skriver filer
+import { fileURLToPath } from "url" // Hjälper oss att få sökvågen till den aktuella filen
+import { dirname } from "path" // Hjälper oss att få sökvågen till den aktuella mappen
 
-const app = express()
+const __filename= fileURLToPath(import.meta.url) // Hjälper oss att få sökvägen till den aktuella filen
+const __dirname = dirname(__filename) // Hjälper oss att få sökvägen till den aktuella mappen
+
+const app = express() // Skapa Express-applikationen
 
 app.use(cors())
 app.use(express.json())
-app.use(express.urlencoded({extend: false}))
+app.use(express.urlencoded({extended: false}))
 
-const saveMassage = () =>{
-  fs.writeFileSync(fileURLToPath, JSON.stringify(message))
+const saveMessage = (messageData) =>{
+  const filePath = `${__dirname}/messages.json` // Skapa fullständign sökväg till JSON-fil
+
+  let messages = []
+  if (fs.existsSync(filePath)) { //Kontrollera om filen faktiskt finns
+    const data = fs.readFileSync(filePath, "utf-8") // Läs fil som text
+    messages = JSON.parse(data) // Konvertera JSON-text till JavaScript array
+  }
+
+  messages.push(messageData) // Läg till det nya meddelande-objekt sist i arrayen
+
+  // Spara tillbaka hela arrayen till filen 
+  // JSON.stringify() konvertera JS till JSON-text
+  // null 2 gör JSON-filen lattläst med indentering
+  fs.writeFileSync(filePath, JSON.stringify(messages, null, 2))
 }
 
 app.post("/messages", (req, res) =>{
   const {name, message} = req.body
   
   try{
-  const newMassage ={
+  const messageData ={
     name,
     message,
     timestamp: new Date().toISOString()
   }
 
-  saveMassage(message)
+  saveMessage(messageData)
 
   res.status(201).json("Saved successfully")
   }catch(error){
