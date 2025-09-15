@@ -4,7 +4,7 @@ const submitBtn = document.querySelector("button[type='submit']")// Läs in subm
 let inputName = form.elements.name.value // Läser in det som skrivs i namn input
 let inputMessage = form.elements.message.value // Läser in det som skrivs i message
 
-const backendUrl ="https://3000-firebase-webb-1git-1756112034739.cluster-yy7ncoxb5zd4ouvntrhoc3go3k.cloudworkstations.dev/Lektion-01/Klient/index.html"
+const backendUrl ="https://5500-firebase-webb-1git-1756112034739.cluster-yy7ncoxb5zd4ouvntrhoc3go3k.cloudworkstations.dev/Lektion-01/Klient/index.html"
 
 const checkInputs = () => {
     inputName = form.elements.name.value

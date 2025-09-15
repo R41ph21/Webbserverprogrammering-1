@@ -3,9 +3,20 @@ import cors from "cors" // Tillåter fröfrågningar från andra domäner (Cross
 import fs from "fs" // Node.js filsystem-modul för att läsa och skriver filer
 import { fileURLToPath } from "url" // Hjälper oss att få sökvågen till den aktuella filen
 import { dirname } from "path" // Hjälper oss att få sökvågen till den aktuella mappen
+import { METHODS } from "http"
 
 const __filename= fileURLToPath(import.meta.url) // Hjälper oss att få sökvägen till den aktuella filen
 const __dirname = dirname(__filename) // Hjälper oss att få sökvägen till den aktuella mappen
+
+const corsOptions = {
+  origin: [
+    "https://5500-firebase-webb-1git-1756112034739.cluster-yy7ncoxb5zd4ouvntrhoc3go3k.cloudworkstations.dev",
+    "http://localhost:5500"
+  ],
+  credentials: true,              
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+  allowedHeaders: ["Content-Type", "Authorization"],
+}
 
 const app = express() // Skapa Express-applikationen
 
@@ -32,7 +43,8 @@ const saveMessage = (messageData) =>{
 
 app.post("/messages", (req, res) =>{
   const {name, message} = req.body
-  
+  console.log("hejsan", name, message);
+
   try{
   const messageData ={
     name,
