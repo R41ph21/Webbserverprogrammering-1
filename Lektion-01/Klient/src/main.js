@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const form = document.querySelector(".input-form") // Läs in formulär
 const submitBtn = document.querySelector("button[type='submit']")// Läs in submit knapp
 
@@ -20,20 +22,18 @@ form.addEventListener("submit", async (e) =>{ // e en förkortning för event
   e.preventDefault() //Hindrar formuläret från att ladda om 
 
     if (!inputName || !inputMessage) return alert("Fyll i båda fälten")
-        
-      try {
-          const response = await fetch(backendUrl,{
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              name: inputName,
-              message: inputMessage
-            })
-          })
+      const messageData = {
+          name: inputName,
+          message: inputMessage,
+      };  
 
-          if (response.ok){
+      try {
+          const response = await axios.post(
+            "http://localhost:3000/messages",
+            messageData
+          );
+
+          if (response.status === 201){
             alert("Meddelandet sparades!")
             form.reset()
           }else{
