@@ -42,7 +42,7 @@ const saveMessage = (messageData) =>{
 }
 
 const getMessages = () => {
-  const filePath = `${__dirname}/message.json`
+  const filePath = `${__dirname}/messages.json`
 
   try {
     if (fs.existsSync(filePath)) {
@@ -84,9 +84,12 @@ app.get("/messages", (req, res) => {
   try {
     const messages= getMessages();
     console.log("Meddelanden: ", messages);
-    res.json(messages)
+
+    res.status(200).json({success: true, data: messages});
   } catch (error) {
-    
+      console-log("Fel vid hämting av meddelanden:", error)
+
+      res.status(500),jason({success: false})
   }
 });
 
