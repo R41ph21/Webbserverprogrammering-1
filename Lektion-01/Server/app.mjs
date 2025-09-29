@@ -5,6 +5,8 @@ import { fileURLToPath } from "url" // Hjälper oss att få sökvågen till den 
 import { dirname } from "path" // Hjälper oss att få sökvågen till den aktuella mappen
 import { METHODS } from "http"
 
+import {v4 as uuidv4} from "uuid"; //används för att skapa unik id
+
 const __filename= fileURLToPath(import.meta.url) // Hjälper oss att få sökvägen till den aktuella filen
 const __dirname = dirname(__filename) // Hjälper oss att få sökvägen till den aktuella mappen
 
@@ -61,11 +63,13 @@ app.post("/messages", (req, res) =>{
   const {name, message} = req.body
   console.log("hejsan", name, message);
 
+  const id = uuidv4();
+
   try{
   const messageData ={
     name,
     message,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),id,
   }
 
   saveMessage(messageData)
@@ -89,7 +93,7 @@ app.get("/messages", (req, res) => {
   } catch (error) {
       console-log("Fel vid hämting av meddelanden:", error)
 
-      res.status(500),jason({success: false})
+      res.status(500).json({success: false})
   }
 });
 

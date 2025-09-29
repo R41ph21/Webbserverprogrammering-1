@@ -18,8 +18,8 @@ const checkInputs = () => {
 const displayMessages = (messages) => {
   console.log({messages: messages})
 
-  const messagesContainer= document.querySelector(".messages")
-console.log({messagesContainer: messagesContainer})
+  const messagesContainer= document.querySelector(".messages");
+  console.log({messagesContainer: messagesContainer});
 
   messagesContainer.innerHTML=""
 
