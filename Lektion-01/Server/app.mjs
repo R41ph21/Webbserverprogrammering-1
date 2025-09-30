@@ -26,12 +26,13 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
-const saveMessage = (messageData) =>{
-  const filePath = `${__dirname}/messages.json` // Skapa fullständign sökväg till JSON-fil
+const filePath = `${__dirname}/messages.json`; // Skapa fullständign sökväg till JSON-fil
+const data = fs.readFileSync(filePath, "utf-8");
 
-  let messages = []
-  if (fs.existsSync(filePath)) { //Kontrollera om filen faktiskt finns
-    const data = fs.readFileSync(filePath, "utf-8") // Läs fil som text
+
+const saveMessage = (messageData) =>{
+  let messages=[]
+  if(fs.existsSync(filePath)) { //Kontrollera om filen faktiskt finns
     messages = JSON.parse(data) // Konvertera JSON-text till JavaScript array
   }
 
@@ -44,11 +45,10 @@ const saveMessage = (messageData) =>{
 }
 
 const getMessages = () => {
-  const filePath = `${__dirname}/messages.json`
+
 
   try {
-    if (fs.existsSync(filePath)) {
-      const data = fs.readFileSync(filePath, "utf-8")
+    if(fs.existsSync(filePath)) {
       return JSON.parse(data)
     }
 
@@ -56,6 +56,22 @@ const getMessages = () => {
   } catch (error) {
     console.log("Fel vid läsning av meddelande:", error);
     return[]
+  }
+}
+const deleteMessage= (messageId) =>{
+  try {
+    //Kontroller om filen finns 
+    if (!fs.existsSync(filePath)){
+      return false; // Retunera false om filen inte finns 
+    }
+
+    let messages = JSON.parse(data) //Konvertera till Javascript array
+
+    // Filterera bort meddelandet med matchande ID 
+    // Filter() skapar en NY array som INTE inåller meddelandet vi vill radera 
+    const filteredMessages = messages.filter(msg => msg.id !== messageId)
+  } catch (error) {
+  
   }
 }
 
@@ -96,5 +112,25 @@ app.get("/messages", (req, res) => {
       res.status(500).json({success: false})
   }
 });
+
+app.delete("messages/:id", (res, req) => {
+  const messageId = req.params.id;
+
+  console.log({ID: messageId});
+  try {
+    const deleted= deleteMessage(messageId)
+
+    if(deleted){
+      res.status(200).json({success: true});
+    }
+    else{
+      res.status(404).json({success: false})
+    }
+  } catch (error) {
+    console.log("Error:", error)
+
+    res.status(500).json({success: false});
+  }
+})
 
 export default app
