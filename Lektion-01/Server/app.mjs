@@ -74,8 +74,13 @@ const deleteMessage= (messageId) =>{
     if (messages.lenght === filteredMessages.length){
       return false; // inget meddelande med det ID:t hittades
     }
+
+    //SPARA DEN UPPDATERADE ARRAYEN (UTAN DET RADERADE MEDDELANDET)
+    fs.writeFileSync(filePath, JSON.stringify(filteredMessages, null, 2))
+    return true 
   } catch (error) {
-  
+    console.log("Fel vid radering", error);
+    return false;
   }
 }
 
@@ -103,11 +108,10 @@ app.post("/messages", (req, res) =>{
 })
 
 app.get("/messages", (req, res) => {
-  console.log("Hämta meddelanden");
+
 
   try {
-    const messages= getMessages();
-    console.log("Meddelanden: ", messages);
+    const messages= getMessages()
 
     res.status(200).json({success: true, data: messages});
   } catch (error) {
@@ -117,7 +121,8 @@ app.get("/messages", (req, res) => {
   }
 });
 
-app.delete("messages/:id", (res, req) => {
+app.delete("/messages/:id", (req, res) => {
+  console.log("raderara meddelande")
   const messageId = req.params.id;
 
   console.log({ID: messageId});

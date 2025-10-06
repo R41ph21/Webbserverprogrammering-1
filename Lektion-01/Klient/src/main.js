@@ -35,10 +35,13 @@ const displayMessages = (messages) => {
     <strong>${msg.name}</strong>
     <span class="timestamp">${date}</span>
     </div>
-    <p class="message-content">${msg.message}</p>`;
+    <p class="message-content">${msg.message}</p>
+    <button class="delete-btn" data-id="${msg.id}">Radera</button>`;
 
     messagesContainer.appendChild(messageDiv);
   })
+//Efter att alla meddelanden har lagts till lägg till event listeners på radera knapparna
+addDeleteEventListeners();
 };
 
 form.addEventListener("input", checkInputs)
@@ -71,8 +74,10 @@ form.addEventListener("submit", async (e) =>{ // e en förkortning för event
 
 })
 
-window.addEventListener("load", async (e) => {
-  try {
+window.addEventListener("load", async (e) => loadMessages());
+
+const loadMessages = async () => {
+try {
     const response = await axios.get("http://localhost:3000/messages");
     console.log({response: response.data})
 
@@ -80,4 +85,41 @@ window.addEventListener("load", async (e) => {
   } catch (error) {
     
   }
-})
+}
+
+const addDeleteEventListeners = () => {
+  // Hitta alla Knappar med klassen "delete-btn"
+  const deleteButtons = document.querySelectorAll(".delete-btn")
+// Lägg till en klick-lysnare på vatje knapp
+  deleteButtons.forEach(btn => {
+    btn.addEventListener("click", handeleDelete)
+  })
+}
+
+const handeleDelete = async (e) => {
+  const messageID = e.target.dataset.id;
+  console.log({messageID: messageID });
+
+  try {
+    // Skicka DELETE-request till servern
+    // Vi lägger tull ID:t i URL:en
+    const response = await axios.delete(`http://localhost:3000/messages/${messageID}`)
+
+    if (response.data.success) {
+      alert("Meddelandet raderades!")
+
+      //Lada om alla meddelanden för att visa uppdaterad lista
+      await loadMessages();
+    } else {
+      alert("Kunde inte radera meddelandet")
+    }
+  } catch (error) {
+    console.log("Fel vid radering:", error)
+
+    if (error.response && error.response.status === 404){
+      alert("Meddelandet hittades inte")
+    } else{
+      alert("Kunde inte radera meddelandet")
+    }
+  }
+}
