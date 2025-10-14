@@ -43,6 +43,10 @@ const displayMessages = (messages) => {
     `;
     messagesContainer.appendChild(messageDiv);
   });
+// Lägg till event listeners för både radera och uppdatera
+  addDeleteEventListeners();
+  addUpdateEventListeners();
+};
 
 form.addEventListener("input", checkInputs)
 
